@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TOEIC Daily">
+    <meta name="theme-color" content="#4F46E5">
+    <title>TOEIC Daily</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- ===== ホーム画面 ===== -->
+        <div id="screen-home" class="screen active">
+            <header class="header">
+                <h1>TOEIC Daily</h1>
+                <p class="header-sub">毎日5分のTOEIC学習</p>
+            </header>
+
+            <div class="container">
+                <!-- ストリークカード -->
+                <div class="card streak-card">
+                    <div class="streak-main">
+                        <div>
+                            <div class="streak-label">連続学習</div>
+                            <div class="streak-number"><span id="home-streak">0</span><span class="streak-unit">日</span></div>
+                        </div>
+                        <div class="streak-best">
+                            <div class="streak-label">最長記録</div>
+                            <div class="streak-best-num" id="home-best-streak">0日</div>
+                        </div>
+                    </div>
+                    <div class="week-dots" id="home-week-dots"></div>
+                </div>
+
+                <!-- 今日の進捗 -->
+                <div class="card">
+                    <div class="card-title">今日の学習</div>
+                    <div class="today-stats">
+                        <div class="today-stat">
+                            <div class="today-stat-icon green">✓</div>
+                            <div class="today-stat-value" id="home-correct">0/0</div>
+                            <div class="today-stat-label">正解数</div>
+                        </div>
+                        <div class="today-stat">
+                            <div class="today-stat-icon blue">📖</div>
+                            <div class="today-stat-value" id="home-words">0</div>
+                            <div class="today-stat-label">学習単語</div>
+                        </div>
+                        <div class="today-stat">
+                            <div class="today-stat-icon orange">%</div>
+                            <div class="today-stat-value" id="home-accuracy">-</div>
+                            <div class="today-stat-label">正答率</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- メニューボタン -->
+                <div class="menu-grid">
+                    <button class="menu-btn" onclick="App.startQuiz('daily')">
+                        <div class="menu-icon indigo">🧠</div>
+                        <div class="menu-title">今日の5問</div>
+                        <div class="menu-sub">Part 5 形式</div>
+                    </button>
+                    <button class="menu-btn" onclick="App.startVocabulary()">
+                        <div class="menu-icon teal">📚</div>
+                        <div class="menu-title">単語カード</div>
+                        <div class="menu-sub">タップで学習</div>
+                    </button>
+                    <button class="menu-btn" onclick="App.startQuiz('review')">
+                        <div class="menu-icon orange">🔄</div>
+                        <div class="menu-title">復習モード</div>
+                        <div class="menu-sub">間違えた問題</div>
+                    </button>
+                    <button class="menu-btn" onclick="App.showScreen('stats')">
+                        <div class="menu-icon red">📊</div>
+                        <div class="menu-title">学習統計</div>
+                        <div class="menu-sub">成績を確認</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== クイズ画面 ===== -->
+        <div id="screen-quiz" class="screen">
+            <header class="header header-compact">
+                <button class="back-btn" onclick="App.showScreen('home')">← 戻る</button>
+                <span id="quiz-counter">1 / 5</span>
+            </header>
+
+            <div class="container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="quiz-progress"></div>
+                </div>
+
+                <div class="quiz-tags" id="quiz-tags"></div>
+
+                <div class="card quiz-card">
+                    <p class="quiz-instruction">次の空欄に入る最も適切な語を選んでください。</p>
+                    <div class="quiz-sentence" id="quiz-sentence"></div>
+                </div>
+
+                <div class="choices" id="quiz-choices"></div>
+
+                <div class="card explanation-card hidden" id="quiz-explanation">
+                    <div class="explanation-header">💡 解説</div>
+                    <p class="explanation-text" id="quiz-explanation-text"></p>
+                </div>
+
+                <button class="btn-primary hidden" id="quiz-next-btn" onclick="App.nextQuestion()">
+                    次の問題へ
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== クイズ結果画面 ===== -->
+        <div id="screen-result" class="screen">
+            <div class="container result-container">
+                <div class="result-icon" id="result-icon">⭐</div>
+                <div class="result-message" id="result-message">素晴らしい！</div>
+                <div class="result-score"><span id="result-correct">0</span> / <span id="result-total">0</span></div>
+                <div class="result-accuracy">正答率 <span id="result-accuracy">0</span>%</div>
+                <div class="result-bar-bg">
+                    <div class="result-bar-fill" id="result-bar"></div>
+                </div>
+                <button class="btn-primary" onclick="App.retryQuiz()">もう一度挑戦</button>
+                <button class="btn-secondary" onclick="App.showScreen('home')">ホームに戻る</button>
+            </div>
+        </div>
+
+        <!-- ===== 単語カード画面 ===== -->
+        <div id="screen-vocab" class="screen">
+            <header class="header header-compact">
+                <button class="back-btn" onclick="App.showScreen('home')">← 戻る</button>
+                <span id="vocab-counter">残り 10 語</span>
+            </header>
+
+            <div class="container vocab-container">
+                <div class="progress-bar">
+                    <div class="progress-fill teal" id="vocab-progress"></div>
+                </div>
+
+                <div class="flashcard" id="flashcard" onclick="App.toggleMeaning()">
+                    <div class="flash-level" id="flash-level">必須</div>
+                    <div class="flash-pos" id="flash-pos">動詞</div>
+                    <div class="flash-word" id="flash-word">implement</div>
+                    <div class="flash-divider hidden" id="flash-divider"></div>
+                    <div class="flash-meaning hidden" id="flash-meaning">実施する、導入する</div>
+                    <div class="flash-example hidden" id="flash-example">
+                        <div class="flash-example-en" id="flash-example-en"></div>
+                        <div class="flash-example-ja" id="flash-example-ja"></div>
+                    </div>
+                    <div class="flash-tap-hint" id="flash-tap-hint">タップして意味を見る</div>
+                </div>
+
+                <div class="vocab-actions hidden" id="vocab-actions">
+                    <button class="vocab-btn unknown" onclick="App.markUnknown()">
+                        <span>✕</span> まだ
+                    </button>
+                    <button class="vocab-btn known" onclick="App.markKnown()">
+                        <span>✓</span> 覚えた
+                    </button>
+                </div>
+
+                <div class="swipe-hint">← まだ ／ 覚えた →</div>
+            </div>
+        </div>
+
+        <!-- ===== 単語カード結果画面 ===== -->
+        <div id="screen-vocab-result" class="screen">
+            <div class="container result-container">
+                <div class="result-icon">🎉</div>
+                <div class="result-message">お疲れさまでした！</div>
+                <div class="vocab-result-stats">
+                    <div class="vocab-result-stat">
+                        <div class="vocab-result-num green" id="vocab-known-count">0</div>
+                        <div>覚えた</div>
+                    </div>
+                    <div class="vocab-result-stat">
+                        <div class="vocab-result-num red" id="vocab-unknown-count">0</div>
+                        <div>まだ</div>
+                    </div>
+                </div>
+                <button class="btn-primary teal-bg" onclick="App.startVocabulary()">もう一度</button>
+                <button class="btn-secondary" onclick="App.showScreen('home')">ホームに戻る</button>
+            </div>
+        </div>
+
+        <!-- ===== 統計画面 ===== -->
+        <div id="screen-stats" class="screen">
+            <header class="header header-compact">
+                <button class="back-btn" onclick="App.showScreen('home')">← 戻る</button>
+                <span>学習統計</span>
+            </header>
+
+            <div class="container">
+                <!-- ストリーク -->
+                <div class="stats-row">
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-icon">🔥</div>
+                        <div class="stat-mini-value" id="stats-streak">0</div>
+                        <div class="stat-mini-unit">日</div>
+                        <div class="stat-mini-label">連続学習</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-icon">🏆</div>
+                        <div class="stat-mini-value" id="stats-best">0</div>
+                        <div class="stat-mini-unit">日</div>
+                        <div class="stat-mini-label">最長記録</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-icon">📅</div>
+                        <div class="stat-mini-value" id="stats-total-days">0</div>
+                        <div class="stat-mini-unit">日</div>
+                        <div class="stat-mini-label">累計学習</div>
+                    </div>
+                </div>
+
+                <!-- 全体成績 -->
+                <div class="card">
+                    <div class="card-title">全体の成績</div>
+                    <div class="stats-overall">
+                        <div>
+                            <div class="stats-overall-label">累計回答数</div>
+                            <div class="stats-overall-value" id="stats-total-q">0 問</div>
+                        </div>
+                        <div>
+                            <div class="stats-overall-label">全体正答率</div>
+                            <div class="stats-overall-value" id="stats-overall-acc">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 週間チャート -->
+                <div class="card">
+                    <div class="card-title-row">
+                        <div class="card-title">今週の成績</div>
+                        <div class="card-title-sub" id="stats-weekly-acc">正答率 -</div>
+                    </div>
+                    <div class="weekly-chart" id="stats-weekly-chart"></div>
+                </div>
+
+                <!-- 単語進捗 -->
+                <div class="card">
+                    <div class="card-title">単語学習の進捗</div>
+                    <div class="vocab-progress-row">
+                        <div>
+                            <div class="vocab-progress-value" id="stats-vocab-progress">0 / 30</div>
+                            <div class="vocab-progress-label">覚えた単語 / 全単語</div>
+                        </div>
+                        <div class="vocab-ring">
+                            <svg viewBox="0 0 36 36" class="ring-svg">
+                                <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                <path class="ring-fill" id="stats-vocab-ring" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            </svg>
+                            <div class="ring-text" id="stats-vocab-pct">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
