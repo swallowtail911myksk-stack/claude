@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TOEIC Daily">
+    <title>TOEIC Daily</title>
+<style>
+/* ===== リセット & 基本設定 ===== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+    --indigo:#4F46E5; --indigo-light:rgba(79,70,229,0.1);
+    --teal:#0D9488; --teal-light:rgba(13,148,136,0.1);
+    --green:#16A34A; --green-light:rgba(22,163,74,0.15);
+    --red:#DC2626; --red-light:rgba(220,38,38,0.15);
+    --orange:#EA580C; --orange-light:rgba(234,88,12,0.1);
+    --bg:#F3F4F6; --card:#FFF; --text:#1F2937; --text-secondary:#6B7280; --border:#E5E7EB;
+    --safe-top:env(safe-area-inset-top); --safe-bottom:env(safe-area-inset-bottom);
+}
+body {
+    font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Hiragino Kaku Gothic ProN',sans-serif;
+    background:var(--bg); color:var(--text);
+    -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; overflow-x:hidden;
+}
+.screen { display:none; min-height:100dvh; padding-bottom:calc(20px + var(--safe-bottom)); }
+.screen.active { display:block; animation:fadeIn .25s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.header { background:var(--indigo); color:#fff; padding:calc(16px + var(--safe-top)) 20px 20px; text-align:center; }
+.header h1 { font-size:24px; font-weight:800; letter-spacing:-.5px; }
+.header-sub { font-size:13px; opacity:.8; margin-top:2px; }
+.header-compact { display:flex; align-items:center; justify-content:space-between; padding:calc(12px + var(--safe-top)) 16px 12px; font-size:15px; font-weight:600; }
+.back-btn { background:none; border:none; color:#fff; font-size:15px; cursor:pointer; padding:4px 0; }
+
+.container { padding:16px; max-width:480px; margin:0 auto; }
+
+.card { background:var(--card); border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.card-title { font-size:16px; font-weight:700; margin-bottom:12px; }
+.card-title-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.card-title-sub { font-size:13px; color:var(--text-secondary); }
+
+.streak-card { background:linear-gradient(135deg,var(--card) 0%,#F0EFFF 100%); }
+.streak-main { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+.streak-label { font-size:13px; color:var(--text-secondary); }
+.streak-number { display:flex; align-items:baseline; gap:4px; }
+.streak-number span:first-child { font-size:48px; font-weight:800; color:var(--indigo); line-height:1; }
+.streak-unit { font-size:18px; color:var(--text-secondary); }
+.streak-best { text-align:right; }
+.streak-best-num { font-size:20px; font-weight:700; color:var(--indigo); opacity:.7; }
+
+.week-dots { display:flex; justify-content:space-around; }
+.week-dot { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.week-dot-label { font-size:11px; color:var(--text-secondary); }
+.week-dot-circle { width:28px; height:28px; border-radius:50%; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:12px; color:#fff; }
+.week-dot-circle.active { background:var(--indigo); }
+
+.today-stats { display:flex; gap:8px; }
+.today-stat { flex:1; text-align:center; }
+.today-stat-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-size:16px; }
+.today-stat-icon.green { background:var(--green-light); }
+.today-stat-icon.blue { background:var(--teal-light); }
+.today-stat-icon.orange { background:var(--orange-light); }
+.today-stat-value { font-size:20px; font-weight:700; }
+.today-stat-label { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+.menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.menu-btn { background:var(--card); border:none; border-radius:16px; padding:20px 16px; text-align:left; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.05); transition:transform .15s,box-shadow .15s; }
+.menu-btn:active { transform:scale(.96); box-shadow:0 1px 4px rgba(0,0,0,.08); }
+.menu-icon { font-size:28px; margin-bottom:10px; }
+.menu-title { font-size:16px; font-weight:700; }
+.menu-sub { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+.progress-bar { height:6px; background:var(--border); border-radius:3px; margin-bottom:16px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--indigo); border-radius:3px; transition:width .4s ease; width:0%; }
+.progress-fill.teal { background:var(--teal); }
+
+.quiz-tags { display:flex; gap:8px; margin-bottom:12px; }
+.tag { font-size:12px; font-weight:600; padding:4px 10px; border-radius:20px; }
+.tag.indigo { color:var(--indigo); background:var(--indigo-light); }
+.tag.green { color:var(--green); background:var(--green-light); }
+.tag.orange { color:var(--orange); background:var(--orange-light); }
+.tag.red { color:var(--red); background:var(--red-light); }
+.quiz-card { margin-bottom:16px; }
+.quiz-instruction { font-size:13px; color:var(--text-secondary); margin-bottom:12px; }
+.quiz-sentence { font-size:16px; line-height:1.8; padding:16px; background:var(--bg); border-radius:12px; }
+
+.choices { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+.choice-btn { display:flex; align-items:center; gap:12px; width:100%; padding:14px 16px; background:var(--bg); border:2px solid transparent; border-radius:12px; font-size:16px; cursor:pointer; transition:all .2s; text-align:left; }
+.choice-btn:active:not(.disabled) { transform:scale(.98); }
+.choice-letter { width:32px; height:32px; border-radius:50%; border:2px solid var(--text-secondary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; }
+.choice-text { flex:1; }
+.choice-icon { font-size:20px; flex-shrink:0; }
+.choice-btn.correct { background:var(--green-light); border-color:var(--green); }
+.choice-btn.correct .choice-letter { background:var(--green); border-color:var(--green); color:#fff; }
+.choice-btn.wrong { background:var(--red-light); border-color:var(--red); }
+.choice-btn.wrong .choice-letter { background:var(--red); border-color:var(--red); color:#fff; }
+.choice-btn.disabled { cursor:default; opacity:.7; }
+.choice-btn.correct.disabled, .choice-btn.wrong.disabled { opacity:1; }
+
+.explanation-card { background:#FFFBEB; border:1px solid #FDE68A; margin-bottom:16px; }
+.explanation-header { font-size:15px; font-weight:700; margin-bottom:8px; }
+.explanation-text { font-size:14px; line-height:1.7; color:#92400E; }
+
+.btn-primary { display:block; width:100%; padding:16px; background:var(--indigo); color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; transition:transform .15s; margin-bottom:10px; }
+.btn-primary:active { transform:scale(.97); }
+.btn-primary.teal-bg { background:var(--teal); }
+.btn-secondary { display:block; width:100%; padding:16px; background:var(--bg); color:var(--indigo); border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; transition:transform .15s; margin-bottom:10px; }
+.btn-secondary:active { transform:scale(.97); }
+
+.result-container { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80dvh; text-align:center; padding:16px; }
+.result-icon { font-size:72px; margin-bottom:16px; }
+.result-message { font-size:28px; font-weight:800; margin-bottom:24px; }
+.result-score { font-size:48px; font-weight:800; color:var(--indigo); letter-spacing:-1px; }
+.result-accuracy { font-size:18px; color:var(--text-secondary); margin-bottom:24px; }
+.result-bar-bg { width:80%; height:14px; background:var(--border); border-radius:7px; margin-bottom:40px; overflow:hidden; }
+.result-bar-fill { height:100%; background:var(--green); border-radius:7px; transition:width .8s ease; width:0%; }
+
+.vocab-container { display:flex; flex-direction:column; min-height:calc(100dvh - 80px); }
+.flashcard { background:var(--card); border-radius:20px; padding:32px 24px; margin:16px 0; box-shadow:0 4px 16px rgba(0,0,0,.08); cursor:pointer; transition:transform .3s; text-align:center; flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:300px; position:relative; }
+.flashcard:active { transform:scale(.98); }
+.flash-level { font-size:12px; font-weight:600; color:var(--teal); background:var(--teal-light); padding:3px 10px; border-radius:12px; position:absolute; top:16px; left:16px; }
+.flash-pos { font-size:12px; color:var(--text-secondary); position:absolute; top:19px; left:80px; }
+.flash-word { font-size:36px; font-weight:800; letter-spacing:-.5px; margin-bottom:8px; }
+.flash-divider { width:60px; height:2px; background:var(--border); margin:12px 0; }
+.flash-meaning { font-size:22px; color:var(--indigo); font-weight:600; margin-bottom:16px; }
+.flash-example { background:var(--bg); padding:14px; border-radius:10px; text-align:left; width:100%; }
+.flash-example-en { font-size:14px; font-style:italic; margin-bottom:4px; line-height:1.5; }
+.flash-example-ja { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+.flash-tap-hint { font-size:14px; color:var(--teal); margin-top:12px; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+.vocab-actions { display:flex; gap:16px; margin:12px 0; }
+.vocab-btn { flex:1; padding:16px; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:transform .15s; }
+.vocab-btn:active { transform:scale(.95); }
+.vocab-btn.unknown { background:var(--red-light); color:var(--red); }
+.vocab-btn.known { background:var(--green-light); color:var(--green); }
+.swipe-hint { text-align:center; font-size:12px; color:var(--text-secondary); padding:8px 0; }
+
+.vocab-result-stats { display:flex; gap:48px; margin-bottom:32px; }
+.vocab-result-stat { text-align:center; font-size:14px; color:var(--text-secondary); }
+.vocab-result-num { font-size:40px; font-weight:800; }
+.vocab-result-num.green { color:var(--green); }
+.vocab-result-num.red { color:var(--red); }
+
+.stats-row { display:flex; gap:10px; margin-bottom:16px; }
+.stat-mini-card { flex:1; background:var(--card); border-radius:12px; padding:14px 8px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.05); }
+.stat-mini-icon { font-size:22px; margin-bottom:6px; }
+.stat-mini-value { font-size:22px; font-weight:800; display:inline; }
+.stat-mini-unit { font-size:12px; color:var(--text-secondary); }
+.stat-mini-label { font-size:11px; color:var(--text-secondary); margin-top:2px; }
+.stats-overall { display:flex; gap:24px; }
+.stats-overall-label { font-size:12px; color:var(--text-secondary); margin-bottom:4px; }
+.stats-overall-value { font-size:20px; font-weight:700; }
+
+.weekly-chart { display:flex; align-items:flex-end; justify-content:space-around; height:120px; padding-top:16px; }
+.chart-bar-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; flex:1; }
+.chart-bar { width:28px; min-height:6px; border-radius:4px; background:var(--border); transition:height .5s ease; }
+.chart-bar.green { background:var(--green); }
+.chart-bar.orange { background:var(--orange); }
+.chart-bar.red { background:var(--red); }
+.chart-bar-pct { font-size:10px; color:var(--text-secondary); }
+.chart-day { font-size:10px; color:var(--text-secondary); }
+
+.vocab-progress-row { display:flex; justify-content:space-between; align-items:center; }
+.vocab-progress-value { font-size:22px; font-weight:700; color:var(--teal); }
+.vocab-progress-label { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+.vocab-ring { position:relative; width:64px; height:64px; }
+.ring-svg { width:100%; height:100%; transform:rotate(-90deg); }
+.ring-bg { fill:none; stroke:var(--border); stroke-width:3; }
+.ring-fill { fill:none; stroke:var(--teal); stroke-width:3; stroke-linecap:round; transition:stroke-dasharray .8s ease; }
+.ring-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:12px; font-weight:700; color:var(--teal); }
+
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+    <!-- ===== ホーム画面 ===== -->
+    <div id="screen-home" class="screen active">
+        <header class="header">
+            <h1>TOEIC Daily</h1>
+            <p class="header-sub">毎日5分のTOEIC学習</p>
+        </header>
+        <div class="container">
+            <div class="card streak-card">
+                <div class="streak-main">
+                    <div>
+                        <div class="streak-label">連続学習</div>
+                        <div class="streak-number"><span id="home-streak">0</span><span class="streak-unit">日</span></div>
+                    </div>
+                    <div class="streak-best">
+                        <div class="streak-label">最長記録</div>
+                        <div class="streak-best-num" id="home-best-streak">0日</div>
+                    </div>
+                </div>
+                <div class="week-dots" id="home-week-dots"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">今日の学習</div>
+                <div class="today-stats">
+                    <div class="today-stat">
+                        <div class="today-stat-icon green">&#10003;</div>
+                        <div class="today-stat-value" id="home-correct">0/0</div>
+                        <div class="today-stat-label">正解数</div>
+                    </div>
+                    <div class="today-stat">
+                        <div class="today-stat-icon blue">&#128214;</div>
+                        <div class="today-stat-value" id="home-words">0</div>
+                        <div class="today-stat-label">学習単語</div>
+                    </div>
+                    <div class="today-stat">
+                        <div class="today-stat-icon orange">%</div>
+                        <div class="today-stat-value" id="home-accuracy">-</div>
+                        <div class="today-stat-label">正答率</div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-grid">
+                <button class="menu-btn" onclick="App.startQuiz('daily')">
+                    <div class="menu-icon">&#129504;</div>
+                    <div class="menu-title">今日の5問</div>
+                    <div class="menu-sub">Part 5 形式</div>
+                </button>
+                <button class="menu-btn" onclick="App.startVocabulary()">
+                    <div class="menu-icon">&#128218;</div>
+                    <div class="menu-title">単語カード</div>
+                    <div class="menu-sub">タップで学習</div>
+                </button>
+                <button class="menu-btn" onclick="App.startQuiz('review')">
+                    <div class="menu-icon">&#128260;</div>
+                    <div class="menu-title">復習モード</div>
+                    <div class="menu-sub">間違えた問題</div>
+                </button>
+                <button class="menu-btn" onclick="App.showScreen('stats')">
+                    <div class="menu-icon">&#128202;</div>
+                    <div class="menu-title">学習統計</div>
+                    <div class="menu-sub">成績を確認</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== クイズ画面 ===== -->
+    <div id="screen-quiz" class="screen">
+        <header class="header header-compact">
+            <button class="back-btn" onclick="App.showScreen('home')">&#8592; 戻る</button>
+            <span id="quiz-counter">1 / 5</span>
+        </header>
+        <div class="container">
+            <div class="progress-bar"><div class="progress-fill" id="quiz-progress"></div></div>
+            <div class="quiz-tags" id="quiz-tags"></div>
+            <div class="card quiz-card">
+                <p class="quiz-instruction">次の空欄に入る最も適切な語を選んでください。</p>
+                <div class="quiz-sentence" id="quiz-sentence"></div>
+            </div>
+            <div class="choices" id="quiz-choices"></div>
+            <div class="card explanation-card hidden" id="quiz-explanation">
+                <div class="explanation-header">&#128161; 解説</div>
+                <p class="explanation-text" id="quiz-explanation-text"></p>
+            </div>
+            <button class="btn-primary hidden" id="quiz-next-btn" onclick="App.nextQuestion()">次の問題へ</button>
+        </div>
+    </div>
+
+    <!-- ===== クイズ結果画面 ===== -->
+    <div id="screen-result" class="screen">
+        <div class="result-container">
+            <div class="result-icon" id="result-icon">&#11088;</div>
+            <div class="result-message" id="result-message">素晴らしい！</div>
+            <div class="result-score"><span id="result-correct">0</span> / <span id="result-total">0</span></div>
+            <div class="result-accuracy">正答率 <span id="result-accuracy">0</span>%</div>
+            <div class="result-bar-bg"><div class="result-bar-fill" id="result-bar"></div></div>
+            <button class="btn-primary" onclick="App.retryQuiz()">もう一度挑戦</button>
+            <button class="btn-secondary" onclick="App.showScreen('home')">ホームに戻る</button>
+        </div>
+    </div>
+
+    <!-- ===== 単語カード画面 ===== -->
+    <div id="screen-vocab" class="screen">
+        <header class="header header-compact">
+            <button class="back-btn" onclick="App.showScreen('home')">&#8592; 戻る</button>
+            <span id="vocab-counter">残り 10 語</span>
+        </header>
+        <div class="container vocab-container">
+            <div class="progress-bar"><div class="progress-fill teal" id="vocab-progress"></div></div>
+            <div class="flashcard" id="flashcard" onclick="App.toggleMeaning()">
+                <div class="flash-level" id="flash-level">必須</div>
+                <div class="flash-pos" id="flash-pos">動詞</div>
+                <div class="flash-word" id="flash-word">implement</div>
+                <div class="flash-divider hidden" id="flash-divider"></div>
+                <div class="flash-meaning hidden" id="flash-meaning">実施する、導入する</div>
+                <div class="flash-example hidden" id="flash-example">
+                    <div class="flash-example-en" id="flash-example-en"></div>
+                    <div class="flash-example-ja" id="flash-example-ja"></div>
+                </div>
+                <div class="flash-tap-hint" id="flash-tap-hint">タップして意味を見る</div>
+            </div>
+            <div class="vocab-actions hidden" id="vocab-actions">
+                <button class="vocab-btn unknown" onclick="App.markUnknown()"><span>&#10007;</span> まだ</button>
+                <button class="vocab-btn known" onclick="App.markKnown()"><span>&#10003;</span> 覚えた</button>
+            </div>
+            <div class="swipe-hint">&#8592; まだ ／ 覚えた &#8594;</div>
+        </div>
+    </div>
+
+    <!-- ===== 単語カード結果画面 ===== -->
+    <div id="screen-vocab-result" class="screen">
+        <div class="result-container">
+            <div class="result-icon">&#127881;</div>
+            <div class="result-message">お疲れさまでした！</div>
+            <div class="vocab-result-stats">
+                <div class="vocab-result-stat">
+                    <div class="vocab-result-num green" id="vocab-known-count">0</div>
+                    <div>覚えた</div>
+                </div>
+                <div class="vocab-result-stat">
+                    <div class="vocab-result-num red" id="vocab-unknown-count">0</div>
+                    <div>まだ</div>
+                </div>
+            </div>
+            <button class="btn-primary teal-bg" onclick="App.startVocabulary()">もう一度</button>
+            <button class="btn-secondary" onclick="App.showScreen('home')">ホームに戻る</button>
+        </div>
+    </div>
+
+    <!-- ===== 統計画面 ===== -->
+    <div id="screen-stats" class="screen">
+        <header class="header header-compact">
+            <button class="back-btn" onclick="App.showScreen('home')">&#8592; 戻る</button>
+            <span>学習統計</span>
+        </header>
+        <div class="container">
+            <div class="stats-row">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">&#128293;</div>
+                    <div class="stat-mini-value" id="stats-streak">0</div>
+                    <div class="stat-mini-unit">日</div>
+                    <div class="stat-mini-label">連続学習</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">&#127942;</div>
+                    <div class="stat-mini-value" id="stats-best">0</div>
+                    <div class="stat-mini-unit">日</div>
+                    <div class="stat-mini-label">最長記録</div>
+                </div>
+                <div class="stat-mini-card">
+                    <div class="stat-mini-icon">&#128197;</div>
+                    <div class="stat-mini-value" id="stats-total-days">0</div>
+                    <div class="stat-mini-unit">日</div>
+                    <div class="stat-mini-label">累計学習</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">全体の成績</div>
+                <div class="stats-overall">
+                    <div>
+                        <div class="stats-overall-label">累計回答数</div>
+                        <div class="stats-overall-value" id="stats-total-q">0 問</div>
+                    </div>
+                    <div>
+                        <div class="stats-overall-label">全体正答率</div>
+                        <div class="stats-overall-value" id="stats-overall-acc">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title-row">
+                    <div class="card-title">今週の成績</div>
+                    <div class="card-title-sub" id="stats-weekly-acc">正答率 -</div>
+                </div>
+                <div class="weekly-chart" id="stats-weekly-chart"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">単語学習の進捗</div>
+                <div class="vocab-progress-row">
+                    <div>
+                        <div class="vocab-progress-value" id="stats-vocab-progress">0 / 30</div>
+                        <div class="vocab-progress-label">覚えた単語 / 全単語</div>
+                    </div>
+                    <div class="vocab-ring">
+                        <svg viewBox="0 0 36 36" class="ring-svg">
+                            <path class="ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="ring-fill" id="stats-vocab-ring" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <div class="ring-text" id="stats-vocab-pct">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== 問題データ =====
+const QUESTIONS=[
+{id:"q001",sentence:"The meeting has been ___ until next Monday due to the manager's business trip.",choices:["postponed","postponing","postpone","postpones"],correctIndex:0,explanation:"has been + 過去分詞で現在完了の受動態。会議は「延期された」という受け身の意味なので postponed が正解。",category:"時制",difficulty:"中級"},
+{id:"q002",sentence:"All employees must submit their expense reports ___ the end of each month.",choices:["by","until","from","since"],correctIndex:0,explanation:"by は「〜までに」という期限を表す前置詞。until は「〜まで（ずっと）」で継続を表す。期限なので by が正解。",category:"前置詞",difficulty:"初級"},
+{id:"q003",sentence:"The new software is ___ more efficient than the previous version.",choices:["significantly","significant","significance","signify"],correctIndex:0,explanation:"比較級 more efficient を修飾するには副詞が必要。significantly（著しく）が正解。",category:"品詞",difficulty:"中級"},
+{id:"q004",sentence:"Ms. Tanaka is responsible ___ managing the entire marketing department.",choices:["for","to","with","of"],correctIndex:0,explanation:"be responsible for 〜 で「〜に対して責任がある」という意味のイディオム。",category:"前置詞",difficulty:"初級"},
+{id:"q005",sentence:"___ the heavy rain, the outdoor event was held as scheduled.",choices:["Despite","Because","Although","However"],correctIndex:0,explanation:"Despite は前置詞で後ろに名詞が来る。「大雨にもかかわらず」。Although は接続詞なので節が必要。",category:"接続詞",difficulty:"中級"},
+{id:"q006",sentence:"The company decided to ___ its headquarters to a larger building downtown.",choices:["relocate","relocation","relocated","relocating"],correctIndex:0,explanation:"to の後ろには動詞の原形が来る。decide to do で「〜することを決める」。",category:"文法",difficulty:"初級"},
+{id:"q007",sentence:"Customer satisfaction has increased ___ since the new policy was implemented.",choices:["steadily","steady","steadiness","steadied"],correctIndex:0,explanation:"動詞 increased を修飾するので副詞 steadily（着実に）が正解。",category:"品詞",difficulty:"中級"},
+{id:"q008",sentence:"The report should be completed ___ Friday at the latest.",choices:["by","on","in","at"],correctIndex:0,explanation:"「遅くとも金曜日までに」という期限を表す by が正解。at the latest で「遅くとも」。",category:"前置詞",difficulty:"初級"},
+{id:"q009",sentence:"The factory will be closed for two weeks ___ annual maintenance can be performed.",choices:["so that","in order","due to","because of"],correctIndex:0,explanation:"so that + 主語 + 動詞 で「〜できるように」という目的を表す。in order の後には to が必要。",category:"接続詞",difficulty:"上級"},
+{id:"q010",sentence:"Each department head is required to give a ___ presentation at the annual meeting.",choices:["brief","briefly","brevity","briefed"],correctIndex:0,explanation:"名詞 presentation を修飾するので形容詞 brief（簡潔な）が正解。",category:"品詞",difficulty:"初級"},
+{id:"q011",sentence:"The sales figures for this quarter were ___ than those of the previous year.",choices:["higher","highest","highly","high"],correctIndex:0,explanation:"than があるので比較級が必要。higher than で「〜より高い」。",category:"文法",difficulty:"初級"},
+{id:"q012",sentence:"Applicants who have ___ in international trade will be given preference.",choices:["experience","experienced","experiencing","experiences"],correctIndex:0,explanation:"have の後に名詞が来る形。have experience in 〜 で「〜の経験がある」。不可算名詞として使う。",category:"語彙",difficulty:"中級"},
+{id:"q013",sentence:"The conference room is ___ equipped with the latest audiovisual technology.",choices:["fully","full","fulfill","fullness"],correctIndex:0,explanation:"過去分詞 equipped を修飾するので副詞 fully（完全に）が正解。",category:"品詞",difficulty:"中級"},
+{id:"q014",sentence:"___ Mr. Kim nor Ms. Park will be available for the meeting on Thursday.",choices:["Neither","Either","Both","Not only"],correctIndex:0,explanation:"neither A nor B で「AもBも〜ない」。nor と組み合わせるのは neither。",category:"文法",difficulty:"中級"},
+{id:"q015",sentence:"The warranty on this product is ___ for a period of two years from the date of purchase.",choices:["valid","validate","validity","validly"],correctIndex:0,explanation:"is の後に補語として形容詞が必要。valid（有効な）が正解。",category:"品詞",difficulty:"中級"},
+{id:"q016",sentence:"Please make sure to ___ all the necessary documents before the deadline.",choices:["submit","submission","submitted","submitting"],correctIndex:0,explanation:"make sure to の後ろは動詞の原形。submit（提出する）が正解。",category:"文法",difficulty:"初級"},
+{id:"q017",sentence:"The hotel offers a wide ___ of services to meet the needs of business travelers.",choices:["range","ranging","ranged","ranger"],correctIndex:0,explanation:"a wide range of 〜 で「幅広い〜」という定型表現。",category:"語彙",difficulty:"中級"},
+{id:"q018",sentence:"Employees are encouraged to participate ___ the company's wellness program.",choices:["in","for","with","to"],correctIndex:0,explanation:"participate in 〜 で「〜に参加する」。in が正しい前置詞。",category:"前置詞",difficulty:"初級"},
+{id:"q019",sentence:"The CEO ___ that the company would expand into Asian markets next year.",choices:["announced","announcing","announcement","announce"],correctIndex:0,explanation:"主語 The CEO に対する述語動詞が必要。過去形 announced が正解。",category:"文法",difficulty:"初級"},
+{id:"q020",sentence:"The new regulation will take ___ at the beginning of next month.",choices:["effect","effective","effectively","effects"],correctIndex:0,explanation:"take effect で「施行される、効力を発する」という定型表現。",category:"語彙",difficulty:"上級"},
+{id:"q021",sentence:"The budget proposal needs to be ___ by the board of directors before implementation.",choices:["approved","approving","approval","approves"],correctIndex:0,explanation:"needs to be + 過去分詞で受動態。「承認される必要がある」。",category:"文法",difficulty:"中級"},
+{id:"q022",sentence:"We would appreciate it if you could respond ___ your earliest convenience.",choices:["at","by","in","on"],correctIndex:0,explanation:"at your earliest convenience で「ご都合のつき次第」というビジネス定型表現。",category:"前置詞",difficulty:"上級"},
+{id:"q023",sentence:"The training session is ___ for all new employees during their first week.",choices:["mandatory","mandatorily","mandate","mandated"],correctIndex:0,explanation:"is の後に補語として形容詞が必要。mandatory（必須の）が正解。",category:"品詞",difficulty:"上級"},
+{id:"q024",sentence:"___ reviewing the contract, please sign and return it to our office.",choices:["After","During","While","Meanwhile"],correctIndex:0,explanation:"After + 動名詞で「〜した後に」。During は名詞を取り、While は節を取る。",category:"接続詞",difficulty:"中級"},
+{id:"q025",sentence:"The company's profits have grown ___ over the past five years.",choices:["considerably","considerable","consider","consideration"],correctIndex:0,explanation:"動詞 have grown を修飾するので副詞 considerably（かなり）が正解。",category:"品詞",difficulty:"上級"},
+{id:"q026",sentence:"Please ensure that all safety ___ are followed during the construction.",choices:["procedures","procedural","proceed","proceeding"],correctIndex:0,explanation:"all の後に名詞の複数形が必要。safety procedures で「安全手順」。",category:"語彙",difficulty:"中級"},
+{id:"q027",sentence:"The manager asked the team to ___ a detailed report by next week.",choices:["prepare","preparation","prepared","preparatory"],correctIndex:0,explanation:"asked someone to do で「〜するよう頼んだ」。to の後は動詞の原形。",category:"文法",difficulty:"初級"},
+{id:"q028",sentence:"The product launch was delayed ___ unexpected supply chain issues.",choices:["due to","so that","even though","as long as"],correctIndex:0,explanation:"due to + 名詞で「〜が原因で」。後ろに名詞句が来ているので due to が正解。",category:"接続詞",difficulty:"中級"},
+{id:"q029",sentence:"Visitors must obtain a security pass ___ entering the building.",choices:["before","after","while","during"],correctIndex:0,explanation:"建物に入る「前に」セキュリティパスを取得する必要がある。文脈から before が正解。",category:"接続詞",difficulty:"初級"},
+{id:"q030",sentence:"The annual report provides a ___ overview of the company's financial performance.",choices:["comprehensive","comprehensively","comprehend","comprehension"],correctIndex:0,explanation:"名詞 overview を修飾するので形容詞 comprehensive（包括的な）が正解。",category:"品詞",difficulty:"上級"}
+];
+
+// ===== 単語データ =====
+const VOCABULARY=[
+{id:"v001",english:"implement",japanese:"実施する、導入する",partOfSpeech:"動詞",exampleEn:"The company plans to implement a new training program.",exampleJa:"会社は新しい研修プログラムを導入する予定です。",level:"必須"},
+{id:"v002",english:"revenue",japanese:"収益、歳入",partOfSpeech:"名詞",exampleEn:"The company's revenue increased by 15% this year.",exampleJa:"会社の収益は今年15%増加しました。",level:"必須"},
+{id:"v003",english:"accommodate",japanese:"収容する、対応する",partOfSpeech:"動詞",exampleEn:"The hotel can accommodate up to 500 guests.",exampleJa:"そのホテルは最大500人の宿泊客を収容できます。",level:"発展"},
+{id:"v004",english:"deadline",japanese:"締め切り、期限",partOfSpeech:"名詞",exampleEn:"Please make sure to meet the deadline for the project.",exampleJa:"プロジェクトの締め切りに間に合うようにしてください。",level:"基礎"},
+{id:"v005",english:"negotiate",japanese:"交渉する",partOfSpeech:"動詞",exampleEn:"We need to negotiate the terms of the contract.",exampleJa:"契約の条件を交渉する必要があります。",level:"必須"},
+{id:"v006",english:"quarterly",japanese:"四半期ごとの",partOfSpeech:"形容詞",exampleEn:"The quarterly report will be published next week.",exampleJa:"四半期報告書は来週発行されます。",level:"必須"},
+{id:"v007",english:"eligible",japanese:"資格がある、適格な",partOfSpeech:"形容詞",exampleEn:"All full-time employees are eligible for the bonus.",exampleJa:"すべての正社員がボーナスの対象となります。",level:"発展"},
+{id:"v008",english:"schedule",japanese:"予定する、スケジュール",partOfSpeech:"動詞/名詞",exampleEn:"The meeting is scheduled for 3 PM tomorrow.",exampleJa:"会議は明日午後3時に予定されています。",level:"基礎"},
+{id:"v009",english:"merchandise",japanese:"商品、製品",partOfSpeech:"名詞",exampleEn:"The store offers a wide variety of merchandise.",exampleJa:"その店は幅広い種類の商品を提供しています。",level:"必須"},
+{id:"v010",english:"approximately",japanese:"おおよそ、約",partOfSpeech:"副詞",exampleEn:"The project will take approximately three months.",exampleJa:"プロジェクトの完了にはおよそ3ヶ月かかります。",level:"基礎"},
+{id:"v011",english:"compliance",japanese:"法令遵守、コンプライアンス",partOfSpeech:"名詞",exampleEn:"The company must ensure compliance with all regulations.",exampleJa:"会社はすべての規制を遵守しなければなりません。",level:"発展"},
+{id:"v012",english:"submit",japanese:"提出する",partOfSpeech:"動詞",exampleEn:"Please submit your application by Friday.",exampleJa:"金曜日までに申請書を提出してください。",level:"基礎"},
+{id:"v013",english:"initiative",japanese:"取り組み、イニシアチブ",partOfSpeech:"名詞",exampleEn:"The company launched a new sustainability initiative.",exampleJa:"会社は新しい持続可能性の取り組みを開始しました。",level:"発展"},
+{id:"v014",english:"efficient",japanese:"効率的な",partOfSpeech:"形容詞",exampleEn:"The new system is much more efficient than the old one.",exampleJa:"新しいシステムは古いものよりもはるかに効率的です。",level:"必須"},
+{id:"v015",english:"anticipate",japanese:"予想する、見込む",partOfSpeech:"動詞",exampleEn:"We anticipate strong demand for the new product.",exampleJa:"新製品に対する強い需要を見込んでいます。",level:"発展"},
+{id:"v016",english:"regarding",japanese:"〜に関して",partOfSpeech:"前置詞",exampleEn:"I have a question regarding the new policy.",exampleJa:"新しいポリシーに関して質問があります。",level:"基礎"},
+{id:"v017",english:"adjacent",japanese:"隣接した、近くの",partOfSpeech:"形容詞",exampleEn:"The parking lot is adjacent to the main building.",exampleJa:"駐車場はメインビルに隣接しています。",level:"発展"},
+{id:"v018",english:"confirm",japanese:"確認する",partOfSpeech:"動詞",exampleEn:"Could you confirm the reservation for tonight?",exampleJa:"今夜の予約を確認していただけますか？",level:"基礎"},
+{id:"v019",english:"substantial",japanese:"かなりの、実質的な",partOfSpeech:"形容詞",exampleEn:"The company made a substantial investment in technology.",exampleJa:"会社はテクノロジーにかなりの投資をしました。",level:"必須"},
+{id:"v020",english:"inventory",japanese:"在庫、棚卸し",partOfSpeech:"名詞",exampleEn:"We need to check the inventory before placing a new order.",exampleJa:"新しい注文をする前に在庫を確認する必要があります。",level:"必須"},
+{id:"v021",english:"attend",japanese:"出席する",partOfSpeech:"動詞",exampleEn:"Over 200 people attended the conference.",exampleJa:"200人以上がその会議に出席しました。",level:"基礎"},
+{id:"v022",english:"preliminary",japanese:"予備的な、準備の",partOfSpeech:"形容詞",exampleEn:"The preliminary results of the survey are promising.",exampleJa:"調査の予備的な結果は有望です。",level:"発展"},
+{id:"v023",english:"collaborate",japanese:"協力する、共同で取り組む",partOfSpeech:"動詞",exampleEn:"The two departments will collaborate on the project.",exampleJa:"2つの部署がそのプロジェクトで協力します。",level:"必須"},
+{id:"v024",english:"warranty",japanese:"保証、保証書",partOfSpeech:"名詞",exampleEn:"The product comes with a two-year warranty.",exampleJa:"その製品には2年間の保証がついています。",level:"必須"},
+{id:"v025",english:"reimburse",japanese:"払い戻す、弁償する",partOfSpeech:"動詞",exampleEn:"The company will reimburse you for travel expenses.",exampleJa:"会社が旅費を払い戻します。",level:"発展"},
+{id:"v026",english:"affordable",japanese:"手頃な価格の",partOfSpeech:"形容詞",exampleEn:"We offer high-quality products at affordable prices.",exampleJa:"手頃な価格で高品質の製品を提供しています。",level:"基礎"},
+{id:"v027",english:"subsequent",japanese:"その後の、続いて起こる",partOfSpeech:"形容詞",exampleEn:"Subsequent meetings will be held every two weeks.",exampleJa:"その後の会議は2週間ごとに開催されます。",level:"発展"},
+{id:"v028",english:"promote",japanese:"昇進させる、促進する",partOfSpeech:"動詞",exampleEn:"She was promoted to senior manager last month.",exampleJa:"彼女は先月シニアマネージャーに昇進しました。",level:"基礎"},
+{id:"v029",english:"feasible",japanese:"実行可能な",partOfSpeech:"形容詞",exampleEn:"The committee determined that the plan was feasible.",exampleJa:"委員会はその計画が実行可能であると判断しました。",level:"発展"},
+{id:"v030",english:"exceed",japanese:"超える、上回る",partOfSpeech:"動詞",exampleEn:"Sales this year exceeded our expectations.",exampleJa:"今年の売上は我々の期待を上回りました。",level:"必須"}
+];
+
+// ===== アプリ本体 =====
+const App=(()=>{
+const S={get(k,f){try{const d=localStorage.getItem('toeic_'+k);return d?JSON.parse(d):f}catch{return f}},set(k,v){localStorage.setItem('toeic_'+k,JSON.stringify(v))}};
+function todayStr(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function yesterdayStr(){const d=new Date();d.setDate(d.getDate()-1);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+
+let streak=S.get('streak',{current:0,longest:0,lastDate:'',totalDays:0});
+let todayRec=S.get('today_'+todayStr(),{correct:0,total:0,words:0});
+let qResults=S.get('qResults',[]);
+let vocabSt=S.get('vocabStatuses',{});
+let dailyRecs=S.get('dailyRecords',{});
+let quizQs=[],quizIdx=0,quizAns=false,quizRes=[],quizMode='daily';
+let vocabWs=[],vocabIdx=0,vocabShow=false,vocabK=0,vocabU=0;
+
+function save(){S.set('streak',streak);S.set('today_'+todayStr(),todayRec);S.set('qResults',qResults);S.set('vocabStatuses',vocabSt);dailyRecs[todayStr()]=todayRec;S.set('dailyRecords',dailyRecs)}
+function recordDay(){const t=todayStr();if(streak.lastDate===t)return;streak.current=streak.lastDate===yesterdayStr()?streak.current+1:1;streak.longest=Math.max(streak.longest,streak.current);streak.lastDate=t;streak.totalDays+=1;save()}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');if(id==='home')refreshHome();if(id==='stats')refreshStats();window.scrollTo(0,0)}
+
+function refreshHome(){
+    todayRec=S.get('today_'+todayStr(),{correct:0,total:0,words:0});
+    document.getElementById('home-streak').textContent=streak.current;
+    document.getElementById('home-best-streak').textContent=streak.longest+'日';
+    document.getElementById('home-correct').textContent=`${todayRec.correct}/${todayRec.total}`;
+    document.getElementById('home-words').textContent=todayRec.words||0;
+    document.getElementById('home-accuracy').textContent=todayRec.total>0?Math.round(todayRec.correct/todayRec.total*100)+'%':'-';
+    const dn=['月','火','水','木','金','土','日'],today=new Date(),td=today.getDay();
+    document.getElementById('home-week-dots').innerHTML=dn.map((n,i)=>{
+        const jd=(i+1)%7,diff=jd-td,d=new Date(today);d.setDate(d.getDate()+diff);
+        const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const ok=dailyRecs[ds]&&dailyRecs[ds].total>0;
+        return`<div class="week-dot"><div class="week-dot-label">${n}</div><div class="week-dot-circle ${ok?'active':''}">${ok?'&#10003;':''}</div></div>`}).join('')}
+
+function startQuiz(mode){
+    quizMode=mode;
+    if(mode==='review'){
+        const wIds=new Set(qResults.filter(r=>!r.isCorrect).map(r=>r.qId));
+        const cIds=new Set(qResults.filter(r=>r.isCorrect).map(r=>r.qId));
+        const rIds=[...wIds].filter(id=>!cIds.has(id));
+        quizQs=shuffle(QUESTIONS.filter(q=>rIds.includes(q.id)));
+        if(!quizQs.length)quizQs=shuffle(QUESTIONS).slice(0,5);
+    }else{quizQs=shuffle(QUESTIONS).slice(0,5)}
+    quizIdx=0;quizAns=false;quizRes=[];showScreen('quiz');renderQ()}
+
+function renderQ(){
+    const q=quizQs[quizIdx];if(!q)return;
+    document.getElementById('quiz-counter').textContent=`${quizIdx+1} / ${quizQs.length}`;
+    document.getElementById('quiz-progress').style.width=`${quizIdx/quizQs.length*100}%`;
+    const dc={初級:'green',中級:'orange',上級:'red'};
+    document.getElementById('quiz-tags').innerHTML=`<span class="tag indigo">${q.category}</span><span class="tag ${dc[q.difficulty]||'orange'}">${q.difficulty}</span>`;
+    document.getElementById('quiz-sentence').innerHTML=q.sentence.replace(/___/g,'<strong style="color:var(--indigo);border-bottom:2px solid var(--indigo)">______</strong>');
+    const L=['A','B','C','D'];
+    document.getElementById('quiz-choices').innerHTML=q.choices.map((c,i)=>`<button class="choice-btn" onclick="App.selectAnswer(${i})" id="choice-${i}"><span class="choice-letter">${L[i]}</span><span class="choice-text">${c}</span><span class="choice-icon"></span></button>`).join('');
+    document.getElementById('quiz-explanation').classList.add('hidden');
+    document.getElementById('quiz-next-btn').classList.add('hidden');quizAns=false}
+
+function selectAnswer(i){
+    if(quizAns)return;quizAns=true;const q=quizQs[quizIdx],ok=i===q.correctIndex;
+    qResults.push({qId:q.id,selected:i,isCorrect:ok,date:todayStr()});
+    todayRec.total+=1;if(ok)todayRec.correct+=1;recordDay();save();quizRes.push({isCorrect:ok});
+    for(let j=0;j<q.choices.length;j++){const b=document.getElementById('choice-'+j);b.classList.add('disabled');
+        if(j===q.correctIndex){b.classList.add('correct');b.querySelector('.choice-icon').innerHTML='&#10003;'}
+        else if(j===i&&!ok){b.classList.add('wrong');b.querySelector('.choice-icon').innerHTML='&#10007;'}}
+    document.getElementById('quiz-explanation-text').textContent=q.explanation;
+    document.getElementById('quiz-explanation').classList.remove('hidden');
+    const nb=document.getElementById('quiz-next-btn');nb.textContent=quizIdx+1>=quizQs.length?'結果を見る':'次の問題へ';nb.classList.remove('hidden')}
+
+function nextQuestion(){if(quizIdx+1>=quizQs.length){showResult()}else{quizIdx++;renderQ();window.scrollTo(0,0)}}
+
+function showResult(){
+    const c=quizRes.filter(r=>r.isCorrect).length,t=quizRes.length,p=t>0?Math.round(c/t*100):0;
+    let ic,msg;if(p>=90){ic='&#11088;';msg='素晴らしい！'}else if(p>=70){ic='&#128077;';msg='よくできました！'}else if(p>=50){ic='&#128522;';msg='もう少し！'}else{ic='&#128214;';msg='復習しましょう！'}
+    document.getElementById('result-icon').innerHTML=ic;document.getElementById('result-message').textContent=msg;
+    document.getElementById('result-correct').textContent=c;document.getElementById('result-total').textContent=t;
+    document.getElementById('result-accuracy').textContent=p;showScreen('result');
+    setTimeout(()=>{const bar=document.getElementById('result-bar');bar.style.width=p+'%';bar.style.background=p>=80?'var(--green)':p>=50?'var(--orange)':'var(--red)'},100)}
+
+function retryQuiz(){startQuiz(quizMode)}
+
+function startVocabulary(){
+    const now=Date.now();
+    const nr=VOCABULARY.filter(w=>{const s=vocabSt[w.id];return!s||s.nextReview<=now});
+    vocabWs=nr.length>=10?shuffle(nr).slice(0,10):shuffle([...nr,...shuffle(VOCABULARY.filter(w=>!nr.find(n=>n.id===w.id)))]).slice(0,10);
+    vocabIdx=0;vocabShow=false;vocabK=0;vocabU=0;showScreen('vocab');renderVC()}
+
+function renderVC(){
+    const w=vocabWs[vocabIdx];if(!w)return;
+    document.getElementById('vocab-counter').textContent=`残り ${vocabWs.length-vocabIdx} 語`;
+    document.getElementById('vocab-progress').style.width=`${vocabIdx/vocabWs.length*100}%`;
+    document.getElementById('flash-level').textContent=w.level;
+    document.getElementById('flash-pos').textContent=w.partOfSpeech;
+    document.getElementById('flash-word').textContent=w.english;
+    document.getElementById('flash-meaning').textContent=w.japanese;
+    document.getElementById('flash-example-en').textContent=w.exampleEn;
+    document.getElementById('flash-example-ja').textContent=w.exampleJa;
+    vocabShow=false;
+    document.getElementById('flash-divider').classList.add('hidden');
+    document.getElementById('flash-meaning').classList.add('hidden');
+    document.getElementById('flash-example').classList.add('hidden');
+    document.getElementById('flash-tap-hint').classList.remove('hidden');
+    document.getElementById('vocab-actions').classList.add('hidden')}
+
+function toggleMeaning(){
+    vocabShow=!vocabShow;
+    document.getElementById('flash-divider').classList.toggle('hidden',!vocabShow);
+    document.getElementById('flash-meaning').classList.toggle('hidden',!vocabShow);
+    document.getElementById('flash-example').classList.toggle('hidden',!vocabShow);
+    document.getElementById('flash-tap-hint').classList.toggle('hidden',vocabShow);
+    document.getElementById('vocab-actions').classList.toggle('hidden',!vocabShow)}
+
+function markKnown(){const w=vocabWs[vocabIdx];let s=vocabSt[w.id]||{known:0,unknown:0,nextReview:0};s.known+=1;s.nextReview=Date.now()+Math.min(Math.pow(2,s.known),30)*864e5;vocabSt[w.id]=s;todayRec.words=(todayRec.words||0)+1;vocabK++;recordDay();save();vocabNext()}
+function markUnknown(){const w=vocabWs[vocabIdx];let s=vocabSt[w.id]||{known:0,unknown:0,nextReview:0};s.unknown+=1;s.nextReview=Date.now();vocabSt[w.id]=s;todayRec.words=(todayRec.words||0)+1;vocabU++;recordDay();save();vocabNext()}
+function vocabNext(){if(vocabIdx+1>=vocabWs.length){document.getElementById('vocab-known-count').textContent=vocabK;document.getElementById('vocab-unknown-count').textContent=vocabU;showScreen('vocab-result')}else{vocabIdx++;renderVC()}}
+
+function refreshStats(){
+    document.getElementById('stats-streak').textContent=streak.current;
+    document.getElementById('stats-best').textContent=streak.longest;
+    document.getElementById('stats-total-days').textContent=streak.totalDays;
+    const tq=qResults.length,tc=qResults.filter(r=>r.isCorrect).length;
+    document.getElementById('stats-total-q').textContent=tq+' 問';
+    document.getElementById('stats-overall-acc').textContent=tq>0?Math.round(tc/tq*100)+'%':'-';
+    // weekly
+    const dn=['月','火','水','木','金','土','日'],today=new Date();let wt=0,wc=0;const bars=[];
+    for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);
+        const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const day=dn[(d.getDay()+6)%7];const r=dailyRecs[ds];let acc=0,has=false;
+        if(r&&r.total>0){acc=Math.round(r.correct/r.total*100);wt+=r.total;wc+=r.correct;has=true}
+        const cl=acc>=80?'green':acc>=50?'orange':acc>0?'red':'';
+        bars.push(`<div class="chart-bar-wrap">${has?`<div class="chart-bar-pct">${acc}%</div>`:''}<div class="chart-bar ${cl}" style="height:${has?Math.max(8,acc):6}px"></div><div class="chart-day">${day}</div></div>`)}
+    document.getElementById('stats-weekly-chart').innerHTML=bars.join('');
+    document.getElementById('stats-weekly-acc').textContent=wt>0?`正答率 ${Math.round(wc/wt*100)}%`:'正答率 -';
+    // vocab
+    const learned=Object.values(vocabSt).filter(s=>s.known>=3&&s.known>s.unknown*2).length,tw=VOCABULARY.length,pct=tw>0?Math.round(learned/tw*100):0;
+    document.getElementById('stats-vocab-progress').textContent=`${learned} / ${tw}`;
+    document.getElementById('stats-vocab-pct').textContent=pct+'%';
+    document.getElementById('stats-vocab-ring').setAttribute('stroke-dasharray',`${pct}, 100`)}
+
+refreshHome();
+return{showScreen,startQuiz,selectAnswer,nextQuestion,retryQuiz,startVocabulary,toggleMeaning,markKnown,markUnknown}
+})();
+</script>
+</body>
+</html>
