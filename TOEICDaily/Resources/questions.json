@@ -1,0 +1,272 @@
+[
+    {
+        "id": "q001",
+        "sentence": "The meeting has been ___ until next Monday due to the manager's business trip.",
+        "choices": ["postponed", "postponing", "postpone", "postpones"],
+        "correctIndex": 0,
+        "explanation": "has been + 過去分詞で現在完了の受動態。会議は「延期された」という受け身の意味なので postponed が正解。",
+        "category": "tense",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q002",
+        "sentence": "All employees must submit their expense reports ___ the end of each month.",
+        "choices": ["by", "until", "from", "since"],
+        "correctIndex": 0,
+        "explanation": "by は「〜までに」という期限を表す前置詞。until は「〜まで（ずっと）」で継続を表す。期限なので by が正解。",
+        "category": "preposition",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q003",
+        "sentence": "The new software is ___ more efficient than the previous version.",
+        "choices": ["significantly", "significant", "significance", "signify"],
+        "correctIndex": 0,
+        "explanation": "比較級 more efficient を修飾するには副詞が必要。significantly（著しく）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q004",
+        "sentence": "Ms. Tanaka is responsible ___ managing the entire marketing department.",
+        "choices": ["for", "to", "with", "of"],
+        "correctIndex": 0,
+        "explanation": "be responsible for 〜 で「〜に対して責任がある」という意味のイディオム。",
+        "category": "preposition",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q005",
+        "sentence": "___ the heavy rain, the outdoor event was held as scheduled.",
+        "choices": ["Despite", "Because", "Although", "However"],
+        "correctIndex": 0,
+        "explanation": "Despite は前置詞で後ろに名詞が来る。「大雨にもかかわらず」。Although は接続詞なので節が必要。",
+        "category": "conjunction",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q006",
+        "sentence": "The company decided to ___ its headquarters to a larger building downtown.",
+        "choices": ["relocate", "relocation", "relocated", "relocating"],
+        "correctIndex": 0,
+        "explanation": "to の後ろには動詞の原形が来る。decide to do で「〜することを決める」。",
+        "category": "grammar",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q007",
+        "sentence": "Customer satisfaction has increased ___ since the new policy was implemented.",
+        "choices": ["steadily", "steady", "steadiness", "steadied"],
+        "correctIndex": 0,
+        "explanation": "動詞 increased を修飾するので副詞 steadily（着実に）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q008",
+        "sentence": "The report should be completed ___ Friday at the latest.",
+        "choices": ["by", "on", "in", "at"],
+        "correctIndex": 0,
+        "explanation": "「遅くとも金曜日までに」という期限を表す by が正解。at the latest で「遅くとも」。",
+        "category": "preposition",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q009",
+        "sentence": "The factory will be closed for two weeks ___ annual maintenance can be performed.",
+        "choices": ["so that", "in order", "due to", "because of"],
+        "correctIndex": 0,
+        "explanation": "so that + 主語 + 動詞 で「〜できるように」という目的を表す。in order の後には to が必要。",
+        "category": "conjunction",
+        "difficulty": "advanced"
+    },
+    {
+        "id": "q010",
+        "sentence": "Each department head is required to give a ___ presentation at the annual meeting.",
+        "choices": ["brief", "briefly", "brevity", "briefed"],
+        "correctIndex": 0,
+        "explanation": "名詞 presentation を修飾するので形容詞 brief（簡潔な）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q011",
+        "sentence": "The sales figures for this quarter were ___ than those of the previous year.",
+        "choices": ["higher", "highest", "highly", "high"],
+        "correctIndex": 0,
+        "explanation": "than があるので比較級が必要。higher than で「〜より高い」。",
+        "category": "grammar",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q012",
+        "sentence": "Applicants who have ___ in international trade will be given preference.",
+        "choices": ["experience", "experienced", "experiencing", "experiences"],
+        "correctIndex": 0,
+        "explanation": "have の後に名詞が来る形。have experience in 〜 で「〜の経験がある」。不可算名詞として使う。",
+        "category": "vocabulary",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q013",
+        "sentence": "The conference room is ___ equipped with the latest audiovisual technology.",
+        "choices": ["fully", "full", "fulfill", "fullness"],
+        "correctIndex": 0,
+        "explanation": "過去分詞 equipped を修飾するので副詞 fully（完全に）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q014",
+        "sentence": "___ Mr. Kim nor Ms. Park will be available for the meeting on Thursday.",
+        "choices": ["Neither", "Either", "Both", "Not only"],
+        "correctIndex": 0,
+        "explanation": "neither A nor B で「AもBも〜ない」。nor と組み合わせるのは neither。",
+        "category": "grammar",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q015",
+        "sentence": "The warranty on this product is ___ for a period of two years from the date of purchase.",
+        "choices": ["valid", "validate", "validity", "validly"],
+        "correctIndex": 0,
+        "explanation": "is の後に補語として形容詞が必要。valid（有効な）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q016",
+        "sentence": "Please make sure to ___ all the necessary documents before the deadline.",
+        "choices": ["submit", "submission", "submitted", "submitting"],
+        "correctIndex": 0,
+        "explanation": "make sure to の後ろは動詞の原形。submit（提出する）が正解。",
+        "category": "grammar",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q017",
+        "sentence": "The hotel offers a wide ___ of services to meet the needs of business travelers.",
+        "choices": ["range", "ranging", "ranged", "ranger"],
+        "correctIndex": 0,
+        "explanation": "a wide range of 〜 で「幅広い〜」という定型表現。",
+        "category": "vocabulary",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q018",
+        "sentence": "Employees are encouraged to participate ___ the company's wellness program.",
+        "choices": ["in", "for", "with", "to"],
+        "correctIndex": 0,
+        "explanation": "participate in 〜 で「〜に参加する」。in が正しい前置詞。",
+        "category": "preposition",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q019",
+        "sentence": "The CEO ___ that the company would expand into Asian markets next year.",
+        "choices": ["announced", "announcing", "announcement", "announce"],
+        "correctIndex": 0,
+        "explanation": "主語 The CEO に対する述語動詞が必要。過去形 announced が正解。",
+        "category": "grammar",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q020",
+        "sentence": "The new regulation will take ___ at the beginning of next month.",
+        "choices": ["effect", "effective", "effectively", "effects"],
+        "correctIndex": 0,
+        "explanation": "take effect で「施行される、効力を発する」という定型表現。",
+        "category": "vocabulary",
+        "difficulty": "advanced"
+    },
+    {
+        "id": "q021",
+        "sentence": "The budget proposal needs to be ___ by the board of directors before implementation.",
+        "choices": ["approved", "approving", "approval", "approves"],
+        "correctIndex": 0,
+        "explanation": "needs to be + 過去分詞で受動態。「承認される必要がある」。",
+        "category": "grammar",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q022",
+        "sentence": "We would appreciate it if you could respond ___ your earliest convenience.",
+        "choices": ["at", "by", "in", "on"],
+        "correctIndex": 0,
+        "explanation": "at your earliest convenience で「ご都合のつき次第」というビジネス定型表現。",
+        "category": "preposition",
+        "difficulty": "advanced"
+    },
+    {
+        "id": "q023",
+        "sentence": "The training session is ___ for all new employees during their first week.",
+        "choices": ["mandatory", "mandatorily", "mandate", "mandated"],
+        "correctIndex": 0,
+        "explanation": "is の後に補語として形容詞が必要。mandatory（必須の）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "advanced"
+    },
+    {
+        "id": "q024",
+        "sentence": "___ reviewing the contract, please sign and return it to our office.",
+        "choices": ["After", "During", "While", "Meanwhile"],
+        "correctIndex": 0,
+        "explanation": "After + 動名詞で「〜した後に」。During は名詞を取り、While は節を取る。",
+        "category": "conjunction",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q025",
+        "sentence": "The company's profits have grown ___ over the past five years.",
+        "choices": ["considerably", "considerable", "consider", "consideration"],
+        "correctIndex": 0,
+        "explanation": "動詞 have grown を修飾するので副詞 considerably（かなり）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "advanced"
+    },
+    {
+        "id": "q026",
+        "sentence": "Please ensure that all safety ___ are followed during the construction.",
+        "choices": ["procedures", "procedural", "proceed", "proceeding"],
+        "correctIndex": 0,
+        "explanation": "all の後に名詞の複数形が必要。safety procedures で「安全手順」。",
+        "category": "vocabulary",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q027",
+        "sentence": "The manager asked the team to ___ a detailed report by next week.",
+        "choices": ["prepare", "preparation", "prepared", "preparatory"],
+        "correctIndex": 0,
+        "explanation": "asked someone to do で「〜するよう頼んだ」。to の後は動詞の原形。",
+        "category": "grammar",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q028",
+        "sentence": "The product launch was delayed ___ unexpected supply chain issues.",
+        "choices": ["due to", "so that", "even though", "as long as"],
+        "correctIndex": 0,
+        "explanation": "due to + 名詞で「〜が原因で」。後ろに名詞句が来ているので due to が正解。",
+        "category": "conjunction",
+        "difficulty": "intermediate"
+    },
+    {
+        "id": "q029",
+        "sentence": "Visitors must obtain a security pass ___ entering the building.",
+        "choices": ["before", "after", "while", "during"],
+        "correctIndex": 0,
+        "explanation": "建物に入る「前に」セキュリティパスを取得する必要がある。文脈から before が正解。",
+        "category": "conjunction",
+        "difficulty": "beginner"
+    },
+    {
+        "id": "q030",
+        "sentence": "The annual report provides a ___ overview of the company's financial performance.",
+        "choices": ["comprehensive", "comprehensively", "comprehend", "comprehension"],
+        "correctIndex": 0,
+        "explanation": "名詞 overview を修飾するので形容詞 comprehensive（包括的な）が正解。",
+        "category": "partOfSpeech",
+        "difficulty": "advanced"
+    }
+]

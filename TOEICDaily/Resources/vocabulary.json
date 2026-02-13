@@ -1,0 +1,272 @@
+[
+    {
+        "id": "v001",
+        "english": "implement",
+        "japanese": "実施する、導入する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "The company plans to implement a new training program.",
+        "exampleTranslation": "会社は新しい研修プログラムを導入する予定です。",
+        "level": "essential"
+    },
+    {
+        "id": "v002",
+        "english": "revenue",
+        "japanese": "収益、歳入",
+        "partOfSpeech": "名詞",
+        "exampleSentence": "The company's revenue increased by 15% this year.",
+        "exampleTranslation": "会社の収益は今年15%増加しました。",
+        "level": "essential"
+    },
+    {
+        "id": "v003",
+        "english": "accommodate",
+        "japanese": "収容する、対応する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "The hotel can accommodate up to 500 guests.",
+        "exampleTranslation": "そのホテルは最大500人の宿泊客を収容できます。",
+        "level": "advanced"
+    },
+    {
+        "id": "v004",
+        "english": "deadline",
+        "japanese": "締め切り、期限",
+        "partOfSpeech": "名詞",
+        "exampleSentence": "Please make sure to meet the deadline for the project.",
+        "exampleTranslation": "プロジェクトの締め切りに間に合うようにしてください。",
+        "level": "basic"
+    },
+    {
+        "id": "v005",
+        "english": "negotiate",
+        "japanese": "交渉する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "We need to negotiate the terms of the contract.",
+        "exampleTranslation": "契約の条件を交渉する必要があります。",
+        "level": "essential"
+    },
+    {
+        "id": "v006",
+        "english": "quarterly",
+        "japanese": "四半期ごとの",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "The quarterly report will be published next week.",
+        "exampleTranslation": "四半期報告書は来週発行されます。",
+        "level": "essential"
+    },
+    {
+        "id": "v007",
+        "english": "eligible",
+        "japanese": "資格がある、適格な",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "All full-time employees are eligible for the bonus.",
+        "exampleTranslation": "すべての正社員がボーナスの対象となります。",
+        "level": "advanced"
+    },
+    {
+        "id": "v008",
+        "english": "schedule",
+        "japanese": "予定する、スケジュール",
+        "partOfSpeech": "動詞/名詞",
+        "exampleSentence": "The meeting is scheduled for 3 PM tomorrow.",
+        "exampleTranslation": "会議は明日午後3時に予定されています。",
+        "level": "basic"
+    },
+    {
+        "id": "v009",
+        "english": "merchandise",
+        "japanese": "商品、製品",
+        "partOfSpeech": "名詞",
+        "exampleSentence": "The store offers a wide variety of merchandise.",
+        "exampleTranslation": "その店は幅広い種類の商品を提供しています。",
+        "level": "essential"
+    },
+    {
+        "id": "v010",
+        "english": "approximately",
+        "japanese": "おおよそ、約",
+        "partOfSpeech": "副詞",
+        "exampleSentence": "The project will take approximately three months to complete.",
+        "exampleTranslation": "プロジェクトの完了にはおよそ3ヶ月かかります。",
+        "level": "basic"
+    },
+    {
+        "id": "v011",
+        "english": "compliance",
+        "japanese": "法令遵守、コンプライアンス",
+        "partOfSpeech": "名詞",
+        "exampleSentence": "The company must ensure compliance with all regulations.",
+        "exampleTranslation": "会社はすべての規制を遵守しなければなりません。",
+        "level": "advanced"
+    },
+    {
+        "id": "v012",
+        "english": "submit",
+        "japanese": "提出する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "Please submit your application by Friday.",
+        "exampleTranslation": "金曜日までに申請書を提出してください。",
+        "level": "basic"
+    },
+    {
+        "id": "v013",
+        "english": "initiative",
+        "japanese": "取り組み、イニシアチブ",
+        "partOfSpeech": "名詞",
+        "exampleSentence": "The company launched a new sustainability initiative.",
+        "exampleTranslation": "会社は新しい持続可能性の取り組みを開始しました。",
+        "level": "advanced"
+    },
+    {
+        "id": "v014",
+        "english": "efficient",
+        "japanese": "効率的な",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "The new system is much more efficient than the old one.",
+        "exampleTranslation": "新しいシステムは古いものよりもはるかに効率的です。",
+        "level": "essential"
+    },
+    {
+        "id": "v015",
+        "english": "anticipate",
+        "japanese": "予想する、見込む",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "We anticipate strong demand for the new product.",
+        "exampleTranslation": "新製品に対する強い需要を見込んでいます。",
+        "level": "advanced"
+    },
+    {
+        "id": "v016",
+        "english": "regarding",
+        "japanese": "〜に関して",
+        "partOfSpeech": "前置詞",
+        "exampleSentence": "I have a question regarding the new policy.",
+        "exampleTranslation": "新しいポリシーに関して質問があります。",
+        "level": "basic"
+    },
+    {
+        "id": "v017",
+        "english": "adjacent",
+        "japanese": "隣接した、近くの",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "The parking lot is adjacent to the main building.",
+        "exampleTranslation": "駐車場はメインビルに隣接しています。",
+        "level": "advanced"
+    },
+    {
+        "id": "v018",
+        "english": "confirm",
+        "japanese": "確認する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "Could you confirm the reservation for tonight?",
+        "exampleTranslation": "今夜の予約を確認していただけますか？",
+        "level": "basic"
+    },
+    {
+        "id": "v019",
+        "english": "substantial",
+        "japanese": "かなりの、実質的な",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "The company made a substantial investment in technology.",
+        "exampleTranslation": "会社はテクノロジーにかなりの投資をしました。",
+        "level": "essential"
+    },
+    {
+        "id": "v020",
+        "english": "inventory",
+        "japanese": "在庫、棚卸し",
+        "partOfSpeech": "名詞",
+        "exampleSentence": "We need to check the inventory before placing a new order.",
+        "exampleTranslation": "新しい注文をする前に在庫を確認する必要があります。",
+        "level": "essential"
+    },
+    {
+        "id": "v021",
+        "english": "attend",
+        "japanese": "出席する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "Over 200 people attended the conference.",
+        "exampleTranslation": "200人以上がその会議に出席しました。",
+        "level": "basic"
+    },
+    {
+        "id": "v022",
+        "english": "preliminary",
+        "japanese": "予備的な、準備の",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "The preliminary results of the survey are promising.",
+        "exampleTranslation": "調査の予備的な結果は有望です。",
+        "level": "advanced"
+    },
+    {
+        "id": "v023",
+        "english": "collaborate",
+        "japanese": "協力する、共同で取り組む",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "The two departments will collaborate on the project.",
+        "exampleTranslation": "2つの部署がそのプロジェクトで協力します。",
+        "level": "essential"
+    },
+    {
+        "id": "v024",
+        "english": "warranty",
+        "japanese": "保証、保証書",
+        "partOfSpeech": "名詞",
+        "exampleSentence": "The product comes with a two-year warranty.",
+        "exampleTranslation": "その製品には2年間の保証がついています。",
+        "level": "essential"
+    },
+    {
+        "id": "v025",
+        "english": "reimburse",
+        "japanese": "払い戻す、弁償する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "The company will reimburse you for travel expenses.",
+        "exampleTranslation": "会社が旅費を払い戻します。",
+        "level": "advanced"
+    },
+    {
+        "id": "v026",
+        "english": "affordable",
+        "japanese": "手頃な価格の",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "We offer high-quality products at affordable prices.",
+        "exampleTranslation": "手頃な価格で高品質の製品を提供しています。",
+        "level": "basic"
+    },
+    {
+        "id": "v027",
+        "english": "subsequent",
+        "japanese": "その後の、続いて起こる",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "Subsequent meetings will be held every two weeks.",
+        "exampleTranslation": "その後の会議は2週間ごとに開催されます。",
+        "level": "advanced"
+    },
+    {
+        "id": "v028",
+        "english": "promote",
+        "japanese": "昇進させる、促進する",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "She was promoted to senior manager last month.",
+        "exampleTranslation": "彼女は先月シニアマネージャーに昇進しました。",
+        "level": "basic"
+    },
+    {
+        "id": "v029",
+        "english": "feasible",
+        "japanese": "実行可能な",
+        "partOfSpeech": "形容詞",
+        "exampleSentence": "The committee determined that the plan was feasible.",
+        "exampleTranslation": "委員会はその計画が実行可能であると判断しました。",
+        "level": "advanced"
+    },
+    {
+        "id": "v030",
+        "english": "exceed",
+        "japanese": "超える、上回る",
+        "partOfSpeech": "動詞",
+        "exampleSentence": "Sales this year exceeded our expectations.",
+        "exampleTranslation": "今年の売上は我々の期待を上回りました。",
+        "level": "essential"
+    }
+]
