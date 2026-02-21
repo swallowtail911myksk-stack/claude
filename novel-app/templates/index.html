@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小説執筆支援アプリ</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>📖 小説執筆支援アプリ</h1>
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="plot">プロット</button>
+      <button class="tab-btn" data-tab="draft">原稿</button>
+      <button class="tab-btn" data-tab="check">構成チェック</button>
+      <button class="tab-btn" data-tab="proofread">推敲</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===== タブ1: プロット ===== -->
+  <section id="tab-plot" class="tab-content active">
+    <div class="section-header">
+      <h2>プロット・アウトライン</h2>
+      <p class="hint">物語の骨格を入力してください。入力後「雛形を生成」ボタンで原稿の下書きが自動作成されます。</p>
+    </div>
+
+    <div class="card">
+      <h3>基本設定</h3>
+      <div class="form-grid">
+        <label>タイトル
+          <input type="text" id="plot-title" placeholder="例: 記憶の向こう側" />
+        </label>
+        <label>ジャンル
+          <input type="text" id="plot-genre" placeholder="例: ファンタジー / 恋愛 / ミステリー" />
+        </label>
+        <label class="full-width">テーマ（伝えたいこと）
+          <input type="text" id="plot-theme" placeholder="例: 過去を受け入れることで未来が開ける" />
+        </label>
+        <label>主人公
+          <input type="text" id="plot-protagonist" placeholder="例: 鈴木 遥（25歳・図書館員）" />
+        </label>
+        <label>対立者・ライバル
+          <input type="text" id="plot-antagonist" placeholder="例: 田中 誠（幼馴染・記者）" />
+        </label>
+        <label class="full-width">舞台・世界観
+          <input type="text" id="plot-setting" placeholder="例: 現代日本、古い港町の図書館" />
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>章構成（アウトライン）</h3>
+      <div id="chapters-container">
+        <!-- 章はJSで動的に追加 -->
+      </div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="addChapter()">＋ 章を追加</button>
+        <button class="btn-secondary" onclick="removeLastChapter()">－ 最後の章を削除</button>
+      </div>
+    </div>
+
+    <div class="btn-row center">
+      <button class="btn-primary" onclick="generateDraft()">✨ 雛形を生成して「原稿」タブへ</button>
+    </div>
+  </section>
+
+  <!-- ===== タブ2: 原稿 ===== -->
+  <section id="tab-draft" class="tab-content">
+    <div class="section-header">
+      <h2>原稿エディタ</h2>
+      <div class="counter-bar">
+        <span>総文字数: <strong id="count-total">0</strong></span>
+        <span>空白除く: <strong id="count-nospace">0</strong></span>
+        <span>行数: <strong id="count-lines">0</strong></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <textarea
+        id="draft-editor"
+        class="editor"
+        placeholder="ここに小説の本文を書いてください。&#10;「プロット」タブで雛形を生成すると、ここに自動で入力されます。"
+        spellcheck="false"
+        oninput="updateCount()"
+      ></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="clearDraft()">クリア</button>
+      <button class="btn-secondary" onclick="copyDraft()">テキストをコピー</button>
+      <button class="btn-secondary" onclick="downloadDraft()">テキストファイルとして保存</button>
+    </div>
+  </section>
+
+  <!-- ===== タブ3: 構成チェック ===== -->
+  <section id="tab-check" class="tab-content">
+    <div class="section-header">
+      <h2>構成チェック</h2>
+      <p class="hint">プロットと原稿の内容をチェックして、問題点や改善提案を表示します。</p>
+    </div>
+
+    <div class="btn-row center">
+      <button class="btn-primary" onclick="checkStructure()">🔍 構成をチェックする</button>
+    </div>
+
+    <div id="check-result" class="result-box" style="display:none;">
+      <div id="check-issues"></div>
+      <div id="check-suggestions"></div>
+    </div>
+  </section>
+
+  <!-- ===== タブ4: 推敲 ===== -->
+  <section id="tab-proofread" class="tab-content">
+    <div class="section-header">
+      <h2>推敲・文章チェック</h2>
+      <p class="hint">原稿の一部（または全文）を貼り付けてチェックします。</p>
+    </div>
+
+    <div class="card">
+      <div class="btn-row" style="margin-bottom:8px;">
+        <button class="btn-secondary" onclick="copyFromDraft()">原稿から全文コピー</button>
+      </div>
+      <textarea
+        id="proofread-input"
+        class="editor short"
+        placeholder="推敲したい文章をここに貼り付けてください"
+        spellcheck="false"
+      ></textarea>
+    </div>
+
+    <div class="btn-row center">
+      <button class="btn-primary" onclick="runProofread()">🖊 推敲チェックを実行</button>
+    </div>
+
+    <div id="proofread-result" class="result-box" style="display:none;"></div>
+  </section>
+
+</main>
+
+<!-- ローディングオーバーレイ -->
+<div id="loading-overlay" class="loading-overlay" style="display:none;">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p id="loading-msg">処理中...</p>
+  </div>
+</div>
+
+<!-- トースト通知 -->
+<div id="toast" class="toast" style="display:none;"></div>
+
+<script>
+// ------------------------------------------------------------------ //
+// タブ切り替え
+// ------------------------------------------------------------------ //
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+  });
+});
+
+// ------------------------------------------------------------------ //
+// 章管理
+// ------------------------------------------------------------------ //
+let chapterCount = 0;
+
+function addChapter() {
+  chapterCount++;
+  const container = document.getElementById("chapters-container");
+  const div = document.createElement("div");
+  div.className = "chapter-item";
+  div.id = `chapter-${chapterCount}`;
+  div.innerHTML = `
+    <div class="chapter-header">
+      <span class="chapter-num">第${chapterCount}章</span>
+    </div>
+    <div class="form-grid">
+      <label>章タイトル
+        <input type="text" id="ch-title-${chapterCount}" placeholder="例: 出会い" />
+      </label>
+      <label class="full-width">あらすじ
+        <textarea id="ch-summary-${chapterCount}" rows="2" placeholder="例: 図書館で遥は見知らぬ男性が落としたノートを拾う"></textarea>
+      </label>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function removeLastChapter() {
+  if (chapterCount === 0) return;
+  const el = document.getElementById(`chapter-${chapterCount}`);
+  if (el) el.remove();
+  chapterCount--;
+}
+
+function getPlotData() {
+  const chapters = [];
+  for (let i = 1; i <= chapterCount; i++) {
+    const el = document.getElementById(`chapter-${i}`);
+    if (!el) continue;
+    chapters.push({
+      title: document.getElementById(`ch-title-${i}`)?.value || "",
+      summary: document.getElementById(`ch-summary-${i}`)?.value || "",
+    });
+  }
+  return {
+    title: document.getElementById("plot-title").value,
+    genre: document.getElementById("plot-genre").value,
+    theme: document.getElementById("plot-theme").value,
+    protagonist: document.getElementById("plot-protagonist").value,
+    antagonist: document.getElementById("plot-antagonist").value,
+    setting: document.getElementById("plot-setting").value,
+    chapters,
+  };
+}
+
+// ------------------------------------------------------------------ //
+// 雛形生成
+// ------------------------------------------------------------------ //
+async function generateDraft() {
+  const plot = getPlotData();
+  showLoading("雛形を生成中...");
+  try {
+    const res = await fetch("/api/generate_draft", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plot }),
+    });
+    const data = await res.json();
+    document.getElementById("draft-editor").value = data.draft;
+    updateCount();
+    // 原稿タブへ移動
+    document.querySelector('[data-tab="draft"]').click();
+    showToast("雛形を生成しました！");
+  } catch (e) {
+    showToast("エラーが発生しました: " + e.message, true);
+  } finally {
+    hideLoading();
+  }
+}
+
+// ------------------------------------------------------------------ //
+// 文字数カウント
+// ------------------------------------------------------------------ //
+let countTimer = null;
+function updateCount() {
+  clearTimeout(countTimer);
+  countTimer = setTimeout(async () => {
+    const text = document.getElementById("draft-editor").value;
+    try {
+      const res = await fetch("/api/count", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const data = await res.json();
+      document.getElementById("count-total").textContent = data.total.toLocaleString();
+      document.getElementById("count-nospace").textContent = data.no_space.toLocaleString();
+      document.getElementById("count-lines").textContent = data.lines.toLocaleString();
+    } catch (_) {}
+  }, 300);
+}
+
+// ------------------------------------------------------------------ //
+// 原稿操作
+// ------------------------------------------------------------------ //
+function clearDraft() {
+  if (!confirm("原稿をクリアしますか？")) return;
+  document.getElementById("draft-editor").value = "";
+  updateCount();
+}
+
+function copyDraft() {
+  const text = document.getElementById("draft-editor").value;
+  navigator.clipboard.writeText(text).then(() => showToast("コピーしました！"));
+}
+
+function downloadDraft() {
+  const text = document.getElementById("draft-editor").value;
+  const title = document.getElementById("plot-title").value || "novel";
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${title}.txt`;
+  a.click();
+}
+
+// ------------------------------------------------------------------ //
+// 構成チェック
+// ------------------------------------------------------------------ //
+async function checkStructure() {
+  const plot = getPlotData();
+  const draft = document.getElementById("draft-editor").value;
+  showLoading("構成をチェック中...");
+  try {
+    const res = await fetch("/api/check_structure", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plot, draft }),
+    });
+    const data = await res.json();
+    const box = document.getElementById("check-result");
+    box.style.display = "block";
+
+    let issueHtml = "";
+    if (data.issues.length > 0) {
+      issueHtml = `<div class="issues"><h4>⚠️ 問題点</h4><ul>${data.issues.map(i => `<li>${escHtml(i)}</li>`).join("")}</ul></div>`;
+    } else {
+      issueHtml = `<div class="issues ok"><h4>✅ 必須項目はすべて入力されています</h4></div>`;
+    }
+
+    let suggHtml = "";
+    if (data.suggestions.length > 0) {
+      suggHtml = `<div class="suggestions"><h4>💡 改善提案</h4><ul>${data.suggestions.map(s => `<li>${escHtml(s).replace(/\n/g, "<br>")}</li>`).join("")}</ul></div>`;
+    }
+
+    document.getElementById("check-issues").innerHTML = issueHtml;
+    document.getElementById("check-suggestions").innerHTML = suggHtml;
+  } catch (e) {
+    showToast("エラーが発生しました: " + e.message, true);
+  } finally {
+    hideLoading();
+  }
+}
+
+// ------------------------------------------------------------------ //
+// 推敲
+// ------------------------------------------------------------------ //
+function copyFromDraft() {
+  document.getElementById("proofread-input").value =
+    document.getElementById("draft-editor").value;
+  showToast("原稿をコピーしました");
+}
+
+async function runProofread() {
+  const text = document.getElementById("proofread-input").value;
+  if (!text.trim()) { showToast("テキストを入力してください", true); return; }
+  showLoading("推敲チェック中...");
+  try {
+    const res = await fetch("/api/proofread", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    const box = document.getElementById("proofread-result");
+    box.style.display = "block";
+    box.innerHTML = `<pre class="proofread-text">${escHtml(data.result)}</pre>`;
+  } catch (e) {
+    showToast("エラーが発生しました: " + e.message, true);
+  } finally {
+    hideLoading();
+  }
+}
+
+// ------------------------------------------------------------------ //
+// ユーティリティ
+// ------------------------------------------------------------------ //
+function escHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function showLoading(msg) {
+  document.getElementById("loading-msg").textContent = msg;
+  document.getElementById("loading-overlay").style.display = "flex";
+}
+function hideLoading() {
+  document.getElementById("loading-overlay").style.display = "none";
+}
+
+function showToast(msg, isError = false) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.className = "toast" + (isError ? " error" : "");
+  toast.style.display = "block";
+  setTimeout(() => { toast.style.display = "none"; }, 3000);
+}
+
+// 初期化: デフォルトで3章追加
+addChapter();
+addChapter();
+addChapter();
+</script>
+</body>
+</html>
